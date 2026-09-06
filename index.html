@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="description" content="一个可爱的周末出行邀请页：选一个想做的事，或者……试试抓住那个调皮的按钮？">
+<meta property="og:title" content="周末出去玩嘛～🐰">
+<meta property="og:description" content="我偷偷准备了超多好玩的选择！第二个按钮有点调皮哦～">
+<title>周末出去玩嘛～🐰</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='38' cy='30' rx='12' ry='26' fill='%23fff' stroke='%235D4157' stroke-width='5'/%3E%3Cellipse cx='62' cy='30' rx='12' ry='26' fill='%23fff' stroke='%235D4157' stroke-width='5'/%3E%3Ccircle cx='50' cy='66' r='28' fill='%23fff' stroke='%235D4157' stroke-width='5'/%3E%3Ccircle cx='41' cy='62' r='3.5' fill='%235D4157'/%3E%3Ccircle cx='59' cy='62' r='3.5' fill='%235D4157'/%3E%3Cellipse cx='31' cy='72' rx='5' ry='3' fill='%23FFB3C6'/%3E%3Cellipse cx='69' cy='72' rx='5' ry='3' fill='%23FFB3C6'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FFF9F0; --paper:#FFFFFF;
+  --pink:#FF8FAB; --pink-deep:#FF6B95; --pink-soft:#FFC2D1;
+  --mint:#7DDBBE; --yellow:#FFD166; --purple:#C4B5FD; --blue:#A2D2FF; --peach:#FFB088;
+  --ink:#5D4157; --ink-soft:rgba(93,65,87,.62);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:"ZCOOL KuaiLe","Yuanti SC","YouYuan","Microsoft YaHei",sans-serif;
+  color:var(--ink);
+  background:linear-gradient(165deg,#FFF9F0 0%,#FFEDF2 42%,#E9F6FF 100%);
+  min-height:100vh;min-height:100dvh;
+  overflow:hidden;
+  user-select:none;-webkit-user-select:none;
+}
+/* ---------- 背景装饰 ---------- */
+.deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.deco svg{position:absolute;filter:drop-shadow(0 4px 0 rgba(93,65,87,.06))}
+.float-a{animation:floatA 7s ease-in-out infinite alternate}
+.float-b{animation:floatA 9s ease-in-out infinite alternate-reverse}
+.float-c{animation:floatA 11s .8s ease-in-out infinite alternate}
+@keyframes floatA{from{transform:translateY(-8px) rotate(-2deg)}to{transform:translateY(10px) rotate(2.5deg)}}
+.twinkle{animation:twk 2.6s ease-in-out infinite}
+.twinkle.t2{animation-delay:.9s}
+.twinkle.t3{animation-delay:1.7s}
+@keyframes twk{0%,100%{transform:scale(.75);opacity:.5}50%{transform:scale(1.15);opacity:1}}
+
+/* ---------- 主卡片 ---------- */
+.stage{position:relative;z-index:2;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px 16px 30px}
+.card{
+  position:relative;background:var(--paper);
+  width:min(430px,94vw);
+  border-radius:38px;
+  padding:64px 26px 30px;
+  box-shadow:0 12px 0 rgba(93,65,87,.07),0 30px 60px rgba(255,143,171,.35),0 0 0 6px rgba(255,255,255,.55);
+  animation:cardIn .85s cubic-bezier(.34,1.4,.44,1) both;
+}
+@keyframes cardIn{0%{transform:scale(.4) rotate(-6deg);opacity:0}62%{transform:scale(1.06) rotate(1.6deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+.peek{position:absolute;top:-96px;left:50%;transform:translateX(-50%);width:196px;pointer-events:none;animation:peekIn .9s .15s cubic-bezier(.34,1.5,.44,1) both}
+@keyframes peekIn{from{transform:translateX(-50%) translateY(-46px) scale(.6);opacity:0}to{transform:translateX(-50%) translateY(0) scale(1);opacity:1}}
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 4.4s infinite}
+@keyframes blink{0%,91%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+
+.view{animation:viewPop .5s cubic-bezier(.34,1.45,.5,1) both}
+@keyframes viewPop{from{transform:scale(.82);opacity:0}to{transform:scale(1);opacity:1}}
+.view[hidden]{display:none}
+
+h1{font-size:clamp(27px,6.4vw,34px);text-align:center;letter-spacing:2px;line-height:1.25}
+h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin:0 6px;animation:twk 2.8s ease-in-out infinite}
+.subtitle{text-align:center;color:var(--ink-soft);font-size:15.5px;margin:10px 4px 24px;line-height:1.7}
+.subtitle b{color:var(--pink-deep);font-weight:normal}
+
+/* 主视图按钮 */
+.btn-primary{
+  display:block;width:100%;border:none;cursor:pointer;
+  font-family:inherit;font-size:23px;letter-spacing:3px;color:#fff;
+  padding:17px 10px 15px;border-radius:999px;
+  background:linear-gradient(180deg,#FF9FBC,#FF6B95);
+  border:3px solid var(--ink);
+  box-shadow:0 6px 0 #d94f7d,0 10px 18px rgba(255,107,149,.35);
+  position:relative;overflow:hidden;
+  transition:transform .15s,box-shadow .15s;
+  animation:breath 2.8s ease-in-out infinite;
+}
+@keyframes breath{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+.btn-primary::after{
+  content:"";position:absolute;top:6px;left:-70%;width:45%;height:22px;border-radius:999px;
+  background:rgba(255,255,255,.55);transform:rotate(-18deg);
+  animation:shine 3.2s ease-in-out infinite;
+}
+@keyframes shine{0%,55%{left:-70%}80%,100%{left:130%}}
+.btn-primary:active{transform:translateY(4px) scale(1);box-shadow:0 2px 0 #d94f7d}
+
+.btn-row{margin-top:16px;text-align:center}
+.btn-dodge{
+  font-family:inherit;cursor:pointer;
+  font-size:16.5px;letter-spacing:2px;color:var(--ink);
+  padding:11px 26px 9px;border-radius:999px;
+  background:#fff;border:3px solid var(--ink);
+  box-shadow:0 5px 0 rgba(93,65,87,.18);
+  transition:transform .2s;
+  animation:wiggle 3s ease-in-out infinite;
+}
+@keyframes wiggle{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.8deg)}}
+.hint{text-align:center;color:var(--ink-soft);font-size:12.5px;margin-top:18px;letter-spacing:1px}
+.hint .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--yellow);margin-right:6px;vertical-align:2px}
+
+/* 逃跑后的按钮 */
+.btn-dodge.escaped{
+  position:fixed;margin:0;z-index:9999;
+  left:0;top:0;
+  transition:left .42s cubic-bezier(.3,1.35,.45,1),top .42s cubic-bezier(.3,1.35,.45,1),background-color .3s,border-radius .35s,clip-path .35s,transform .25s;
+  white-space:nowrap;
+}
+.btn-dodge.popping{animation:dodgePop .5s cubic-bezier(.34,1.6,.44,1)}
+@keyframes dodgePop{0%{transform:scale(.6) rotate(-14deg)}55%{transform:scale(1.14) rotate(7deg)}100%{transform:scale(1) rotate(0)}}
+.btn-dodge.tired{transform:scale(.82) rotate(-6deg)!important;animation:tiredShake .5s ease-in-out infinite}
+@keyframes tiredShake{0%,100%{transform:scale(.82) rotate(-7deg)}50%{transform:scale(.82) rotate(5deg)}}
+/* 可爱形状池 */
+.f-round{border-radius:50%!important}
+.f-drop{border-radius:52% 52% 52% 14%!important}
+.f-leaf{border-radius:8% 62% 8% 62%!important}
+.f-pill{border-radius:999px!important}
+.f-pud{border-radius:50% 50% 34% 34%/62% 62% 30% 30%!important}
+.f-star{clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)!important;border:none!important;box-shadow:none!important;border-radius:0!important}
+.f-heart{clip-path:path('M50 88 C20 65 4 45 8 28 C11 12 30 8 50 27 C70 8 89 12 92 28 C96 45 80 65 50 88 Z')!important;border:none!important;box-shadow:none!important;border-radius:0!important}
+.f-cloud{border-radius:0 0 30px 30px!important;box-shadow:none!important;border:none!important}
+.f-cloud::before,.f-cloud::after{content:"";position:absolute;background:inherit;border-radius:50%;z-index:-1}
+.f-cloud::before{width:52%;height:120%;top:-52%;left:6%}
+.f-cloud::after{width:42%;height:105%;top:-38%;right:8%}
+.btn-dodge.f-star,.btn-dodge.f-heart{width:88px!important;height:82px!important;padding:0!important;font-size:13.5px!important;letter-spacing:1px!important}
+
+/* 说话气泡 */
+.speech{
+  position:fixed;z-index:10000;pointer-events:none;
+  background:#fff;border:2.5px solid var(--ink);border-radius:18px;
+  padding:7px 13px 5px;font-size:13.5px;letter-spacing:1px;
+  box-shadow:0 4px 0 rgba(93,65,87,.15);
+  animation:speechIn .35s cubic-bezier(.34,1.5,.44,1) both;
+}
+.speech::after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-6px;border:6px solid transparent;border-top-color:var(--ink)}
+@keyframes speechIn{from{transform:scale(.4) translateY(10px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+
+/* ---------- 分类视图 ---------- */
+.vhead{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.btn-back{
+  font-family:inherit;cursor:pointer;font-size:14px;color:var(--ink);
+  background:var(--cream);border:2.5px solid var(--ink);border-radius:999px;
+  padding:6px 15px 4px;box-shadow:0 3.5px 0 rgba(93,65,87,.18);
+  transition:transform .15s;flex-shrink:0;
+}
+.btn-back:active{transform:translateY(2.5px);box-shadow:0 1px 0 rgba(93,65,87,.18)}
+.vhead h2{font-size:21px;letter-spacing:2px}
+.vhead .vsub{font-size:12.5px;color:var(--ink-soft);margin-top:2px;letter-spacing:.5px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.tile{
+  background:#fff;border:2.5px solid var(--ink);border-radius:22px;
+  padding:13px 6px 10px;cursor:pointer;text-align:center;
+  box-shadow:0 4.5px 0 rgba(93,65,87,.14);
+  transition:transform .18s cubic-bezier(.34,1.6,.44,1),box-shadow .18s;
+  font-family:inherit;font-size:14.5px;letter-spacing:1px;color:var(--ink);
+  animation:viewPop .45s cubic-bezier(.34,1.45,.5,1) both;
+}
+.tile:hover{transform:translateY(-5px) rotate(-1.5deg);box-shadow:0 8px 0 rgba(93,65,87,.14)}
+.tile:active{transform:translateY(2px)}
+.tile .ticon{display:block;width:52px;height:52px;margin:0 auto 7px}
+.tile .tname{display:block}
+.tile.food-expand{background:linear-gradient(180deg,#FFF3F6,#FFE4EC)}
+.tile .tbadge{display:block;font-size:10.5px;color:var(--pink-deep);margin-top:2px;letter-spacing:.5px}
+
+/* ---------- 庆祝层 ---------- */
+#celebrate{
+  position:fixed;inset:0;z-index:500;
+  display:flex;align-items:center;justify-content:center;padding:22px;
+  background:radial-gradient(circle at 50% 38%,#FFF6E9 0%,#FFE4EC 55%,#F3E8FF 100%);
+  animation:fadeIn .35s both;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+#celebrate[hidden]{display:none}
+.cele-card{
+  position:relative;text-align:center;background:#fff;border-radius:36px;
+  width:min(410px,94vw);padding:78px 26px 30px;
+  box-shadow:0 12px 0 rgba(93,65,87,.07),0 30px 60px rgba(196,181,253,.4),0 0 0 6px rgba(255,255,255,.55);
+  animation:cardIn .8s cubic-bezier(.34,1.4,.44,1) both;
+}
+.cele-bunny{position:absolute;top:-92px;left:50%;transform:translateX(-50%);width:188px;animation:happyHop 1s ease-in-out infinite}
+@keyframes happyHop{0%,100%{transform:translateX(-50%) translateY(0) rotate(-2deg)}50%{transform:translateX(-50%) translateY(-14px) rotate(2.5deg)}}
+.cele-card h2{font-size:clamp(23px,5.6vw,28px);letter-spacing:2px;line-height:1.45}
+.cele-card .cele-sub{color:var(--ink-soft);font-size:15px;margin:12px 2px 22px;line-height:1.75}
+.cele-card .cele-sub b{color:var(--pink-deep);font-weight:normal}
+.stars-line{display:flex;justify-content:center;gap:5px;margin-bottom:14px}
+.stars-line svg{width:24px;height:24px;animation:twk 2.2s ease-in-out infinite}
+.stars-line svg:nth-child(2){animation-delay:.3s;width:30px;height:30px}
+.stars-line svg:nth-child(3){animation-delay:.6s}
+.btn-again{
+  font-family:inherit;cursor:pointer;font-size:16.5px;letter-spacing:2px;color:#fff;
+  background:linear-gradient(180deg,#8FE0C5,#57CBA7);border:3px solid var(--ink);
+  border-radius:999px;padding:12px 30px 10px;box-shadow:0 5px 0 #3FAE8B;
+  transition:transform .15s,box-shadow .15s;
+}
+.btn-again:active{transform:translateY(3px);box-shadow:0 2px 0 #3FAE8B}
+
+/* 彩纸 */
+.cf{position:fixed;top:-24px;z-index:600;pointer-events:none;animation:cfFall linear both}
+@keyframes cfFall{to{transform:translateY(112vh) rotate(740deg)}}
+@media (max-width:420px){
+  .card{padding:58px 18px 26px}
+  .grid{gap:10px}
+  .tile{border-radius:18px;padding:11px 4px 9px;font-size:13.5px}
+  .tile .ticon{width:46px;height:46px}
+}
+</style>
+</head>
+<body>
+
+<!-- 背景装饰 -->
+<div class="deco" id="deco"></div>
+
+<!-- 主舞台 -->
+<main class="stage">
+  <section class="card">
+    <!-- 探头小兔 -->
+    <div class="peek" id="peekBunny"></div>
+
+    <!-- 视图1：主视图 -->
+    <div class="view" id="viewMain">
+      <h1><svg class="hstar" viewBox="0 0 64 64"><path d="M32 8 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2 Z" fill="#FFD166" stroke="#5D4157" stroke-width="4" stroke-linejoin="round"/></svg>周末出去玩嘛～<svg class="hstar" viewBox="0 0 64 64"><path d="M32 8 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2 Z" fill="#FFC2D1" stroke="#5D4157" stroke-width="4" stroke-linejoin="round"/></svg></h1>
+      <p class="subtitle">我偷偷准备了<b>超多</b>好玩的选择，<br>快挑一个嘛，好不好呀～</p>
+      <button class="btn-primary" id="btnGo">出去玩！</button>
+      <div class="btn-row">
+        <button class="btn-dodge" id="btnDodge">才不出去呢</button>
+      </div>
+      <p class="hint"><span class="dot"></span>悄悄说：第二个按钮有点调皮，慎点</p>
+    </div>
+
+    <!-- 视图2：分类 -->
+    <div class="view" id="viewCats" hidden>
+      <div class="vhead">
+        <button class="btn-back" id="backMain">← 回去</button>
+        <div><h2>想做点什么呀？</h2><div class="vsub">点击一个，马上安排！</div></div>
+      </div>
+      <div class="grid" id="catGrid"></div>
+    </div>
+
+    <!-- 视图3：吃好吃的 -->
+    <div class="view" id="viewFood" hidden>
+      <div class="vhead">
+        <button class="btn-back" id="backCats">← 回去</button>
+        <div><h2>想吃什么呀？</h2><div class="vsub">都很好吃，选哪个都不亏！</div></div>
+      </div>
+      <div class="grid" id="foodGrid"></div>
+    </div>
+  </section>
+</main>
+
+<!-- 庆祝层 -->
+<div id="celebrate" hidden>
+  <div class="cele-card">
+    <div class="cele-bunny" id="celeBunny"></div>
+    <div class="stars-line" id="starsLine"></div>
+    <h2 id="celeTitle"></h2>
+    <p class="cele-sub" id="celeSub"></p>
+    <button class="btn-again" id="btnAgain">再看看别的</button>
+  </div>
+</div>
+
+<script>
+/* ============ SVG 素材库（全部手绘） ============ */
+const S = 'stroke="#5D4157" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"';
+const svgWrap = inner => `<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><g fill="none" ${S}>${inner}</g></svg>`;
+
+const ICONS = {
+  popcorn: svgWrap(`
+    <path d="M20 30 L25 55 L39 55 L44 30 Z" fill="#FF8FAB"/>
+    <path d="M28 32 L30 53" stroke="#fff" stroke-width="3.5"/>
+    <path d="M36 32 L34 53" stroke="#fff" stroke-width="3.5"/>
+    <circle cx="23" cy="25" r="6" fill="#FFF6E5"/>
+    <circle cx="33" cy="20" r="7" fill="#FFF6E5"/>
+    <circle cx="42" cy="26" r="5.5" fill="#FFF6E5"/>`),
+  meal: svgWrap(`
+    <ellipse cx="23" cy="16" rx="6" ry="9" fill="#FFC2D1"/>
+    <path d="M23 25 v26"/>
+    <path d="M41 10 v41 M35 10 v9 a6 6 0 0 0 12 0 v-9" fill="#FFF6E5"/>
+    <path d="M41 25 a9 9 0 0 0 0 9" stroke-width="3"/>`),
+  mic: svgWrap(`
+    <rect x="25" y="10" width="14" height="24" rx="7" fill="#A2D2FF"/>
+    <path d="M25 19 h14 M25 26 h14" stroke-width="2.6"/>
+    <path d="M18 25 v3 a14 14 0 0 0 28 0 v-3"/>
+    <path d="M32 42 v10 M23 54 h18"/>`),
+  ferris: svgWrap(`
+    <circle cx="32" cy="27" r="15" stroke-width="3.4"/>
+    <path d="M32 12 v30 M17 27 h30 M21.5 16.5 L42.5 37.5 M42.5 16.5 L21.5 37.5" stroke-width="2.2"/>
+    <circle cx="32" cy="12" r="4.5" fill="#FF8FAB"/>
+    <circle cx="47" cy="27" r="4.5" fill="#FFD166"/>
+    <circle cx="32" cy="42" r="4.5" fill="#7DDBBE"/>
+    <circle cx="17" cy="27" r="4.5" fill="#C4B5FD"/>
+    <circle cx="32" cy="27" r="2.6" fill="#5D4157" stroke="none"/>
+    <path d="M32 42 L24 55 M32 42 L40 55 M21 55 h22" stroke-width="3"/>`),
+  tree: svgWrap(`
+    <circle cx="23" cy="23" r="10.5" fill="#7DDBBE"/>
+    <circle cx="41" cy="21" r="11.5" fill="#7DDBBE"/>
+    <circle cx="32" cy="31" r="9.5" fill="#8FE5C8"/>
+    <path d="M32 39 v14" stroke="#B08968" stroke-width="7"/>
+    <path d="M32 39 v14" stroke="#B08968" stroke-width="5.5"/>
+    <path d="M17 55 h30" stroke-width="3.4"/>
+    <path d="M19 55 q1 -4 4 -5 M45 55 q-1 -4 -4 -5" stroke-width="2.6"/>`),
+  mask: svgWrap(`
+    <path d="M12 22 Q32 12 52 22 Q52 40 32 47 Q12 40 12 22 Z" fill="#C4B5FD"/>
+    <ellipse cx="23" cy="29" rx="5.5" ry="4" fill="#FFF6E5"/>
+    <ellipse cx="41" cy="29" rx="5.5" ry="4" fill="#FFF6E5"/>
+    <path d="M29 38.5 q3 3 6 0" stroke-width="3"/>
+    <path d="M12 22 l-6.5 -3.5 M52 22 l6.5 -3.5" stroke-width="3"/>
+    <path d="M32 16.5 l1.4 2.8 3 .5 -2.2 2.2 .5 3 -2.7 -1.5 -2.7 1.5 .5 -3 -2.2 -2.2 3 -.5 Z" fill="#FFD166" stroke="none"/>`),
+  coffee: svgWrap(`
+    <path d="M18 26 h24 l-2 13 a10 10 0 0 1 -20 0 Z" fill="#FFF6E5"/>
+    <path d="M42 29 q9 2.5 0 10" stroke-width="3.4"/>
+    <path d="M14 55 h32" stroke-width="3.4"/>
+    <path d="M25 18 q-3 -4 0 -8 M33 18 q3 -4 0 -8" stroke="#C4B5FD" stroke-width="3"/>`),
+  lock: svgWrap(`
+    <rect x="19" y="29" width="26" height="23" rx="9" fill="#FFD166"/>
+    <path d="M24 29 v-7 a8 8 0 0 1 16 0 v7"/>
+    <circle cx="32" cy="38" r="3" fill="#5D4157" stroke="none"/>
+    <path d="M32 41 v5" stroke-width="3"/>`),
+  bag: svgWrap(`
+    <path d="M17 24 L47 24 L43.5 55 L20.5 55 Z" fill="#FFC2D1"/>
+    <path d="M25 24 v-5 a7 7 0 0 1 14 0 v5"/>
+    <path d="M32 42 c-1.5 -3 -6 -2.5 -6 .5 c0 2.5 3 4.5 6 6.5 c3 -2 6 -4 6 -6.5 c0 -3 -4.5 -3.5 -6 -.5 Z" fill="#FF6B95" stroke="none"/>`),
+  frame: svgWrap(`
+    <rect x="11" y="13" width="42" height="38" rx="6" fill="#FFD166"/>
+    <rect x="17" y="19" width="30" height="26" rx="3" fill="#FFF6E5"/>
+    <path d="M19 41 l8 -10 5 6 4 -5 9 9" stroke="#7DDBBE" stroke-width="3.4"/>
+    <circle cx="24" cy="25" r="3.5" fill="#FF6B95" stroke="none"/>`),
+  gamepad: svgWrap(`
+    <rect x="9" y="21" width="46" height="24" rx="12" fill="#A2D2FF"/>
+    <path d="M21 28 v10 M16 33 h10" stroke="#FFF6E5" stroke-width="3.6"/>
+    <circle cx="41" cy="30" r="3.6" fill="#FF6B95" stroke="none"/>
+    <circle cx="47.5" cy="36.5" r="3.6" fill="#FFD166" stroke="none"/>`),
+  bbq: svgWrap(`
+    <path d="M11 36 h42 l-4 12 a5 5 0 0 1 -5 4 h-24 a5 5 0 0 1 -5 -4 Z" fill="#C4B5FD"/>
+    <path d="M18 41 h28 M18 46.5 h28" stroke="#fff" stroke-width="2.8" opacity=".75"/>
+    <rect x="17" y="25" width="11" height="9" rx="3" fill="#FF9770"/>
+    <rect x="33" y="23" width="12" height="10" rx="3.5" fill="#FF9770"/>
+    <path d="M26 18 q-2 -3.5 0 -7 M41 16 q2 -3.5 0 -7" stroke="#C4B5FD" stroke-width="3"/>`),
+  elephant: svgWrap(`
+    <circle cx="16" cy="27" r="10" fill="#A2D2FF"/>
+    <circle cx="48" cy="27" r="10" fill="#A2D2FF"/>
+    <circle cx="16" cy="28" r="4.8" fill="#FFC2D1" stroke="none"/>
+    <circle cx="48" cy="28" r="4.8" fill="#FFC2D1" stroke="none"/>
+    <circle cx="32" cy="30" r="15" fill="#A2D2FF"/>
+    <path d="M32 36 q-1.5 10 5 13 q3 1.5 3.5 -1.5" stroke-width="3.6"/>
+    <circle cx="26" cy="27" r="2.1" fill="#5D4157" stroke="none"/>
+    <circle cx="38" cy="27" r="2.1" fill="#5D4157" stroke="none"/>
+    <path d="M29 33 q3 2.8 6 0" stroke-width="3"/>`),
+  pgbun: svgWrap(`
+    <ellipse cx="32" cy="38" rx="19" ry="14" fill="#FFD166"/>
+    <path d="M18 32 L46 44 M46 32 L18 44 M32 24 v28" stroke="#E8A33D" stroke-width="2.6"/>
+    <path d="M14 41 q18 11 36 0" stroke-width="3.2"/>`),
+  mixian: svgWrap(`
+    <path d="M11 33 h42 l-4.5 11 a9 9 0 0 1 -8 6 h-17 a9 9 0 0 1 -8 -6 Z" fill="#FF6B95"/>
+    <path d="M15 36.5 q4 3 8.5 0 q4 3 8.5 0 q4 3 8.5 0 q4 3 8.5 0" stroke="#FFF6E5" stroke-width="3"/>
+    <path d="M36 8 L46 30 M42 6 L50 28" stroke="#B08968" stroke-width="3.2"/>
+    <path d="M44 27 q-4 7 1 9" stroke="#FFE29A" stroke-width="3.4"/>`),
+  hotpot: svgWrap(`
+    <path d="M13 33 h38 v5 a13 13 0 0 1 -13 13 h-12 a13 13 0 0 1 -13 -13 Z" fill="#FF6B95"/>
+    <path d="M17 36 q3.5 2.8 7.5 0 q3.5 2.8 7.5 0 q3.5 2.8 7.5 0 q3.5 2.8 7.5 0" stroke="#FFF6E5" stroke-width="3"/>
+    <path d="M8 35 h5 M51 35 h5" stroke-width="3.4"/>
+    <path d="M26 25 q-3 -4 0 -8 M38 25 q3 -4 0 -8" stroke="#C4B5FD" stroke-width="3"/>`),
+  onigiri: svgWrap(`
+    <path d="M32 11 Q34.5 11 36.5 15 L52 42 Q54.5 47 49 50 L15 50 Q9.5 47 12 42 L27.5 15 Q29.5 11 32 11 Z" fill="#FFF6E5"/>
+    <rect x="24" y="38" width="16" height="11.5" rx="3.5" fill="#3D5A66" stroke="#5D4157" stroke-width="3"/>
+    <circle cx="25" cy="32.5" r="1.9" fill="#5D4157" stroke="none"/>
+    <circle cx="39" cy="32.5" r="1.9" fill="#5D4157" stroke="none"/>
+    <circle cx="20" cy="35" r="2.6" fill="#FFB3C6" stroke="none"/>
+    <circle cx="44" cy="35" r="2.6" fill="#FFB3C6" stroke="none"/>`),
+  cake: svgWrap(`
+    <path d="M17 37 h30 l-3.5 17 h-23 Z" fill="#FFC2D1"/>
+    <path d="M23.5 39 l1.5 13 M32 39 v13 M40.5 39 l-1.5 13" stroke="#fff" stroke-width="2.6"/>
+    <path d="M17 37 Q17 26 32 26 Q47 26 47 37 Z" fill="#FFF6E5"/>
+    <path d="M25 30.5 q3.5 3.5 7 0 q3.5 3.5 7 0" stroke="#FFD166" stroke-width="2.6"/>
+    <circle cx="32" cy="21" r="4.5" fill="#FF6B95"/>
+    <path d="M32 16.5 v-4" stroke-width="3"/>`),
+  lobster: svgWrap(`
+    <ellipse cx="32" cy="33" rx="11" ry="14" fill="#FF6B95"/>
+    <circle cx="14" cy="23" r="6" fill="#FF6B95"/>
+    <circle cx="50" cy="23" r="6" fill="#FF6B95"/>
+    <path d="M18 27 l-2 5 M46 27 l2 5" stroke-width="3"/>
+    <path d="M28 19 q-6 -8 -11 -9 M36 19 q6 -8 11 -9" stroke-width="2.8"/>
+    <circle cx="28" cy="29" r="2" fill="#5D4157" stroke="none"/>
+    <circle cx="36" cy="29" r="2" fill="#5D4157" stroke="none"/>
+    <path d="M29 35 q3 2.6 6 0" stroke-width="2.8"/>
+    <path d="M26 45.5 l-2.5 8 M38 45.5 l2.5 8 M32 47 v9" stroke-width="3"/>`),
+  chili: svgWrap(`
+    <path d="M27 17 Q47 21 45 42 Q44 52 33 52 Q42 44 38 33 Q33 21 24 22 Q22 17 27 17 Z" fill="#FF6B95"/>
+    <path d="M24 21 q-8 -5 -12 2 q7 5 12 -2 Z" fill="#7DDBBE"/>`),
+  burger: svgWrap(`
+    <path d="M13 29 a19 13.5 0 0 1 38 0 Z" fill="#FFD166"/>
+    <circle cx="24" cy="23" r="1.6" fill="#fff" stroke="none"/>
+    <circle cx="32" cy="20" r="1.6" fill="#fff" stroke="none"/>
+    <circle cx="40" cy="23" r="1.6" fill="#fff" stroke="none"/>
+    <path d="M14 31 q4.5 5.5 9 0 q4.5 5.5 9 0 q4.5 5.5 9 0 q4.5 5.5 9 0" stroke="#7DDBBE" stroke-width="4"/>
+    <rect x="15" y="37" width="34" height="7" rx="3.5" fill="#B08968"/>
+    <rect x="14" y="45" width="36" height="8" rx="4" fill="#FFD166"/>`),
+  star: svgWrap(`
+    <path d="M32 8 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2 Z" fill="#FFD166"/>`),
+  heartBig: svgWrap(`
+    <path d="M32 54 C20 44 10 35 10 24 C10 14 18 9 25 12 C29 13.5 31.5 16 32 19 C32.5 16 35 13.5 39 12 C46 9 54 14 54 24 C54 35 44 44 32 54 Z" fill="#FF6B95"/>`),
+};
+
+/* 小兔子 */
+function bunnySVG(happy){
+  const mouth = happy
+    ? `<path d="M102 116 q4 6 8 0 q4 6 8 0" fill="#FF8FAB" stroke-width="4"/>
+       <path d="M96 112 a6 6 0 0 1 8 -2 M124 112 a6 6 0 0 0 -8 -2" stroke-width="3.4"/>`
+    : `<path d="M103 119 q3.5 4.5 7 0 q3.5 4.5 7 0" fill="none"/>`;
+  const arms = happy
+    ? `<path d="M62 96 Q48 78 54 64" fill="none"/><path d="M158 96 Q172 78 166 64" fill="none"/>
+       <circle cx="54" cy="62" r="8.5" fill="#fff"/><circle cx="166" cy="62" r="8.5" fill="#fff"/>`
+    : `<path d="M110 150 c-6 -7 -17 -4 -17 -13 c0 -8 10 -12 17 -6 c7 -6 17 -2 17 6 c0 9 -11 6 -17 13 Z" fill="#FF6B95" stroke-width="4"/>
+       <circle cx="91" cy="148" r="8.5" fill="#fff"/><circle cx="129" cy="148" r="8.5" fill="#fff"/>`;
+  return `<svg viewBox="0 0 220 172" xmlns="http://www.w3.org/2000/svg">
+    <g fill="none" ${S}>
+      <ellipse cx="74" cy="40" rx="16" ry="33" fill="#fff" transform="rotate(-13 74 40)"/>
+      <ellipse cx="74" cy="48" rx="7" ry="19" fill="#FFC2D1" stroke="none" transform="rotate(-13 74 48)"/>
+      <ellipse cx="146" cy="40" rx="16" ry="33" fill="#fff" transform="rotate(13 146 40)"/>
+      <ellipse cx="146" cy="48" rx="7" ry="19" fill="#FFC2D1" stroke="none" transform="rotate(13 146 48)"/>
+      <circle cx="110" cy="106" r="55" fill="#fff"/>
+      ${arms}
+      <g class="eye"><circle cx="89" cy="103" r="6" fill="#5D4157" stroke="none"/><circle cx="91.2" cy="100.8" r="2" fill="#fff" stroke="none"/></g>
+      <g class="eye"><circle cx="131" cy="103" r="6" fill="#5D4157" stroke="none"/><circle cx="133.2" cy="100.8" r="2" fill="#fff" stroke="none"/></g>
+      <ellipse cx="74" cy="118" rx="8.5" ry="5.5" fill="#FFB3C6" stroke="none"/>
+      <ellipse cx="146" cy="118" rx="8.5" ry="5.5" fill="#FFB3C6" stroke="none"/>
+      ${mouth}
+    </g>
+  </svg>`;
+}
+document.getElementById('peekBunny').innerHTML = bunnySVG(false);
+document.getElementById('celeBunny').innerHTML = bunnySVG(true);
+
+/* ============ 背景装饰 ============ */
+const cloudSVG = (w, face) => `<svg width="${w}" viewBox="0 0 120 70" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" ${S}>
+    <path d="M28 58 a15 15 0 0 1 2 -29 a22 22 0 0 1 43 -6 a17 17 0 0 1 19 27 l1 8 Z" fill="#fff"/>
+    ${face ? `<circle cx="48" cy="42" r="2.4" fill="#5D4157" stroke="none"/><circle cx="70" cy="42" r="2.4" fill="#5D4157" stroke="none"/><path d="M53 49 q6 5 12 0" stroke-width="3"/><ellipse cx="38" cy="48" rx="5" ry="3.2" fill="#FFB3C6" stroke="none"/><ellipse cx="80" cy="48" rx="5" ry="3.2" fill="#FFB3C6" stroke="none"/>` : ''}
+  </g></svg>`;
+const starDeco = (w,color) => `<svg width="${w}" viewBox="0 0 64 64"><path d="M32 8 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2 Z" fill="${color}" stroke="#5D4157" stroke-width="4" stroke-linejoin="round"/></svg>`;
+const heartDeco = (w,color) => `<svg width="${w}" viewBox="0 0 64 64"><path d="M32 54 C20 44 10 35 10 24 C10 14 18 9 25 12 C29 13.5 31.5 16 32 19 C32.5 16 35 13.5 39 12 C46 9 54 14 54 24 C54 35 44 44 32 54 Z" fill="${color}" stroke="#5D4157" stroke-width="4" stroke-linejoin="round"/></svg>`;
+const flowerDeco = (w) => `<svg width="${w}" viewBox="0 0 64 64"><g stroke="#5D4157" stroke-width="3.5" stroke-linejoin="round">
+  <circle cx="32" cy="15" r="8" fill="#FFC2D1"/><circle cx="47" cy="26" r="8" fill="#FFC2D1"/><circle cx="41" cy="44" r="8" fill="#FFC2D1"/><circle cx="23" cy="44" r="8" fill="#FFC2D1"/><circle cx="17" cy="26" r="8" fill="#FFC2D1"/>
+  <circle cx="32" cy="30" r="7.5" fill="#FFD166"/></g></svg>`;
+const rainbowDeco = (w) => `<svg width="${w}" viewBox="0 0 120 66" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 62 a50 50 0 0 1 100 0" fill="none" stroke="#FFB3C6" stroke-width="9" stroke-linecap="round"/>
+  <path d="M22 62 a38 38 0 0 1 76 0" fill="none" stroke="#FFE29A" stroke-width="9" stroke-linecap="round"/>
+  <path d="M34 62 a26 26 0 0 1 52 0" fill="none" stroke="#A8EED3" stroke-width="9" stroke-linecap="round"/>
+  <path d="M46 62 a14 14 0 0 1 28 0" fill="none" stroke="#C4B5FD" stroke-width="9" stroke-linecap="round"/></svg>`;
+
+(function buildDeco(){
+  const items = [
+    {html:cloudSVG(150,true),  style:'top:6%;left:4%;',    cls:'float-a'},
+    {html:cloudSVG(110,false), style:'top:12%;right:7%;',  cls:'float-b'},
+    {html:cloudSVG(90,false),  style:'bottom:16%;left:8%;',cls:'float-c'},
+    {html:cloudSVG(130,true),  style:'bottom:9%;right:5%;',cls:'float-a'},
+    {html:starDeco(34,'#FFD166'), style:'top:22%;left:16%;',  cls:'twinkle'},
+    {html:starDeco(26,'#A2D2FF'), style:'top:9%;left:38%;',   cls:'twinkle t2'},
+    {html:starDeco(30,'#FFC2D1'), style:'top:30%;right:14%;', cls:'twinkle t3'},
+    {html:starDeco(24,'#C4B5FD'), style:'bottom:26%;left:20%;',cls:'twinkle t2'},
+    {html:starDeco(28,'#7DDBBE'), style:'bottom:30%;right:22%;',cls:'twinkle'},
+    {html:heartDeco(30,'#FFB3C6'),style:'top:44%;left:7%;',   cls:'float-b'},
+    {html:heartDeco(24,'#FFC2D1'),style:'top:38%;right:6%;',  cls:'float-a'},
+    {html:heartDeco(26,'#A2D2FF'),style:'bottom:38%;right:9%;',cls:'float-c'},
+    {html:flowerDeco(38),style:'bottom:6%;left:22%;', cls:'float-b'},
+    {html:flowerDeco(32),style:'top:56%;right:3.5%;', cls:'float-a'},
+    {html:rainbowDeco(150),style:'bottom:-6px;left:-18px;opacity:.9',cls:'float-c'},
+  ];
+  document.getElementById('deco').innerHTML =
+    items.map(i=>`<div class="${i.cls}" style="position:absolute;${i.style}">${i.html}</div>`).join('');
+})();
+
+/* ============ 数据 ============ */
+const CATS = [
+  {id:'movie', name:'看电影',       icon:'popcorn'},
+  {id:'food',  name:'吃好吃的',     icon:'meal',  expand:true, badge:'有超多选择！'},
+  {id:'ktv',   name:'唱 K',        icon:'mic'},
+  {id:'park',  name:'逛公园',      icon:'tree'},
+  {id:'fun',   name:'去游乐园',    icon:'ferris'},
+  {id:'jbs',   name:'剧本杀',      icon:'mask'},
+  {id:'cafe',  name:'咖啡馆坐坐',  icon:'coffee'},
+  {id:'game',  name:'打电动',      icon:'gamepad'},
+  {id:'escape',name:'密室逃脱',    icon:'lock'},
+  {id:'mall',  name:'逛商场',      icon:'bag'},
+  {id:'art',   name:'看展览',      icon:'frame'},
+  {id:'snack', name:'随便逛逛吃小吃',icon:'burger'},
+];
+const FOODS = [
+  {id:'bbq',   name:'烤肉',       icon:'bbq'},
+  {id:'thai',  name:'泰国餐厅',   icon:'elephant'},
+  {id:'hk',    name:'港式餐厅',   icon:'pgbun'},
+  {id:'ynn',   name:'云南菜',     icon:'mixian'},
+  {id:'hotpot',name:'火锅',       icon:'hotpot'},
+  {id:'jp',    name:'日料',       icon:'onigiri'},
+  {id:'sweet', name:'甜品店',     icon:'cake'},
+  {id:'lobster',name:'小龙虾',    icon:'lobster'},
+  {id:'chuan', name:'川菜馆',     icon:'chili'},
+  {id:'burger',name:'汉堡薯条',   icon:'burger'},
+];
+
+/* ============ 视图切换 ============ */
+const views = {main:viewMain, cats:viewCats, food:viewFood};
+let currentView = 'main';
+function showView(name){
+  Object.values(views).forEach(v=>v.hidden=true);
+  const v = views[name];
+  v.hidden = false;
+  v.classList.remove('view'); void v.offsetWidth; v.classList.add('view');
+  currentView = name;
+  if(dodgeState.escaped) setTimeout(()=>dodge(), 60);
+}
+function tileHTML(t){
+  return `<button class="tile ${t.expand?'food-expand':''}" data-id="${t.id}" style="animation-delay:${Math.random()*.25}s">
+    <span class="ticon">${ICONS[t.icon]}</span>
+    <span class="tname">${t.name}</span>
+    ${t.badge?`<span class="tbadge">${t.badge}</span>`:''}
+  </button>`;
+}
+catGrid.innerHTML = CATS.map(tileHTML).join('');
+foodGrid.innerHTML = FOODS.map(tileHTML).join('');
+
+btnGo.addEventListener('click', ()=>showView('cats'));
+backMain.addEventListener('click', ()=>showView('main'));
+backCats.addEventListener('click', ()=>showView('cats'));
+catGrid.addEventListener('click', e=>{
+  const t = e.target.closest('.tile'); if(!t) return;
+  const cat = CATS.find(c=>c.id===t.dataset.id);
+  if(cat.expand) showView('food');
+  else celebrate(cat.name, false);
+});
+foodGrid.addEventListener('click', e=>{
+  const t = e.target.closest('.tile'); if(!t) return;
+  const f = FOODS.find(c=>c.id===t.dataset.id);
+  celebrate(f.name, false);
+});
+
+/* ============ 庆祝层 ============ */
+const starsLine = document.getElementById('starsLine');
+starsLine.innerHTML = [ICONS.star, ICONS.heartBig, ICONS.star].join('');
+let confettiTimer = null;
+function confettiBurst(){
+  document.querySelectorAll('.cf').forEach(el=>el.remove());
+  const colors = ['#FF8FAB','#FFD166','#7DDBBE','#C4B5FD','#A2D2FF','#FFB088'];
+  for(let i=0;i<90;i++){
+    const el = document.createElement('div');
+    el.className = 'cf';
+    const s = 7 + Math.random()*9;
+    el.style.cssText = `left:${Math.random()*100}vw;width:${s}px;height:${s*(.7+Math.random()*.8)}px;
+      background:${colors[i%colors.length]};
+      border-radius:${Math.random()<.45?'50%':'3px'};
+      animation-duration:${2.4+Math.random()*2.2}s;animation-delay:${Math.random()*1.2}s;
+      transform:rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(el);
+  }
+  clearTimeout(confettiTimer);
+  confettiTimer = setTimeout(()=>document.querySelectorAll('.cf').forEach(el=>el.remove()), 6500);
+}
+function celebrate(name, caught){
+  document.getElementById('celebrate').hidden = false;
+  const title = document.getElementById('celeTitle');
+  const sub = document.getElementById('celeSub');
+  if(caught){
+    title.textContent = '呜…被你抓到了！';
+    sub.innerHTML = '哼，追了我这么久，也算你诚心诚意～<br>那就勉为其难地陪你<b>出去玩</b>吧！🥺';
+  }else{
+    title.innerHTML = `耶！就决定是「<span style="color:var(--pink-deep)">${name}</span>」啦！`;
+    sub.innerHTML = '本周内择日出发，快乐不等人～<br>快点通知对方，<b>不许咕咕</b>哦！';
+  }
+  confettiBurst();
+}
+btnAgain.addEventListener('click', ()=>{
+  document.getElementById('celebrate').hidden = true;
+  showView('cats');
+});
+
+/* ============ 调皮逃跑按钮 ============ */
+const dodgeBtn = document.getElementById('btnDodge');
+const dodgeState = {escaped:false, count:0, cool:0, tired:false, mx:0, my:0};
+const SHAPES = [
+  {cls:'',        radius:'999px'},
+  {cls:'f-round', radius:'50%'},
+  {cls:'f-drop',  radius:'52% 52% 52% 14%'},
+  {cls:'f-leaf',  radius:'8% 62% 8% 62%'},
+  {cls:'f-pill',  radius:'999px'},
+  {cls:'f-pud',   radius:'50% 50% 34% 34%/62% 62% 30% 30%'},
+  {cls:'f-star',  radius:'0'},
+  {cls:'f-heart', radius:'0'},
+  {cls:'f-cloud', radius:'0 0 30px 30px'},
+];
+const COLORS = ['#FFE3EC','#E2F8EF','#FFF3D6','#EDE7FF','#E3F1FF','#FFE8D9','#FFF6E5','#FFE0E8','#E8F9F0'];
+const PHRASES = ['抓不到我~','嘿嘿嘿','就不去嘛！','略略略~','你追我呀','风一样快！','别想啦！','我要变身啦','抓 呀 抓不到','（装可爱）','再追要生气啦！','手指够不着吧～'];
+let shapeIdx = 0;
+
+window.addEventListener('mousemove', e=>{
+  dodgeState.mx = e.clientX; dodgeState.my = e.clientY;
+  if(dodgeState.tired) return;
+  const now = performance.now();
+  if(now - dodgeState.cool < 400) return;
+  const r = dodgeBtn.getBoundingClientRect();
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  const d = Math.hypot(dodgeState.mx-cx, dodgeState.my-cy);
+  const range = dodgeState.escaped ? 110 : 90;
+  if(d < range) dodge();
+});
+dodgeBtn.addEventListener('mouseenter', ()=>{ if(!dodgeState.tired) dodge(); });
+dodgeBtn.addEventListener('touchstart', e=>{
+  e.preventDefault();
+  if(dodgeState.tired){ caughtEgg(); return; }
+  dodge();
+}, {passive:false});
+dodgeBtn.addEventListener('click', e=>{
+  if(dodgeState.tired){ caughtEgg(); return; }
+  e.preventDefault();
+  dodge(); // 鼠标极快命中时的兜底：点了也白点
+});
+
+function dodge(){
+  if(dodgeState.tired) return;
+  const now = performance.now();
+  if(now - dodgeState.cool < 400) return;
+  dodgeState.cool = now;
+  const pad = 12;
+  const w = dodgeBtn.offsetWidth, h = dodgeBtn.offsetHeight;
+  if(!dodgeState.escaped){
+    const r = dodgeBtn.getBoundingClientRect();
+    dodgeBtn.style.left = r.left+'px';
+    dodgeBtn.style.top = r.top+'px';
+    dodgeBtn.classList.add('escaped');
+    dodgeState.escaped = true;
+  }
+  const vw = innerWidth, vh = innerHeight;
+  let nx, ny, tries = 0;
+  do{
+    nx = pad + Math.random()*Math.max(1,(vw - w - pad*2));
+    ny = pad + Math.random()*Math.max(1,(vh - h - pad*2));
+    tries++;
+  }while(tries < 40 && Math.hypot(nx+w/2-dodgeState.mx, ny+h/2-dodgeState.my) < 190);
+  dodgeBtn.style.left = nx+'px';
+  dodgeBtn.style.top = ny+'px';
+
+  // 变形 + 变色 + 变话
+  shapeIdx = (shapeIdx + 1 + Math.floor(Math.random()*3)) % SHAPES.length;
+  SHAPES.forEach(s=>dodgeBtn.classList.remove(s.cls));
+  const shape = SHAPES[shapeIdx];
+  if(shape.cls) dodgeBtn.classList.add(shape.cls);
+  dodgeBtn.style.borderRadius = shape.cls ? '' : shape.radius;
+  dodgeBtn.style.background = COLORS[Math.floor(Math.random()*COLORS.length)];
+  dodgeBtn.textContent = PHRASES[Math.floor(Math.random()*PHRASES.length)];
+  dodgeBtn.classList.remove('popping'); void dodgeBtn.offsetWidth; dodgeBtn.classList.add('popping');
+
+  dodgeState.count++;
+  if(dodgeState.count === 18) enterTired();
+  else if(dodgeState.count > 4 && dodgeState.count % 5 === 0) saySpeech();
+}
+
+function saySpeech(){
+  const lines = ['怎么又是我跑？','手指酸不酸呀~','兔子说它帮不了你','越跑越有劲了呢','建议改点左边的按钮'];
+  const sp = document.createElement('div');
+  sp.className = 'speech';
+  sp.textContent = lines[Math.floor(Math.random()*lines.length)];
+  const r = dodgeBtn.getBoundingClientRect();
+  document.body.appendChild(sp);
+  let x = r.left + r.width/2 - sp.offsetWidth/2;
+  x = Math.max(8, Math.min(innerWidth - sp.offsetWidth - 8, x));
+  let y = r.top - sp.offsetHeight - 14;
+  if(y < 8) y = r.bottom + 14;
+  sp.style.left = x+'px';
+  sp.style.top = y+'px';
+  setTimeout(()=>{ sp.style.transition='opacity .3s'; sp.style.opacity='0'; }, 1300);
+  setTimeout(()=>sp.remove(), 1700);
+}
+
+function enterTired(){
+  dodgeState.tired = true;
+  dodgeBtn.classList.add('tired');
+  dodgeBtn.textContent = '呼…呼…跑不动了…';
+  setTimeout(()=>{
+    if(!dodgeState.tired) return;
+    dodgeState.tired = false;
+    dodgeBtn.classList.remove('tired');
+    dodgeState.cool = 0;
+    dodge();
+  }, 1400);
+}
+function caughtEgg(){
+  dodgeState.tired = false;
+  dodgeBtn.classList.remove('tired');
+  dodgeBtn.hidden = true;
+  document.getElementById('celebrate').hidden = false;
+  celebrate('', true);
+}
+</script>
+</body>
+</html>
