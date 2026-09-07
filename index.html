@@ -99,6 +99,22 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
 @keyframes wiggle{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.8deg)}}
 .hint{text-align:center;color:var(--ink-soft);font-size:12.5px;margin-top:18px;letter-spacing:1px}
 .hint .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--yellow);margin-right:6px;vertical-align:2px}
+/* 追击进度条 */
+.chase-meter{margin-top:12px;text-align:center}
+.chase-meter[hidden]{display:none}
+.chase-label{font-size:12.5px;color:var(--ink-soft);letter-spacing:1px;margin-bottom:6px}
+.chase-label b{color:var(--pink-deep);font-weight:normal}
+.chase-bar{height:13px;border-radius:999px;border:2.5px solid var(--ink);background:#fff;overflow:hidden}
+.chase-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#FFC2D1,#FF6B95,#C4B5FD);transition:width .35s cubic-bezier(.34,1.3,.44,1)}
+/* 逃跑残影 */
+.btn-ghost{
+  position:fixed;z-index:9998;margin:0;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  font-family:inherit;font-size:13px;letter-spacing:1px;color:var(--ink);
+  border:2.5px solid var(--ink);opacity:.55;white-space:nowrap;overflow:hidden;
+  animation:ghostFade .55s ease-out both;
+}
+@keyframes ghostFade{to{opacity:0;transform:scale(.7) rotate(-8deg)}}
 
 /* 逃跑后的按钮 */
 .btn-dodge.escaped{
@@ -233,7 +249,11 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
       <div class="btn-row" id="dodgeRow">
         <button class="btn-dodge" id="btnDodge">才不出去呢</button>
       </div>
-      <p class="hint"><span class="dot"></span>悄悄说：第二个按钮有点调皮，慎点</p>
+      <p class="hint"><span class="dot"></span>悄悄说：第二个按钮有点调皮，听说追它 30 次会有惊喜？</p>
+      <div class="chase-meter" id="chaseMeter" hidden>
+        <div class="chase-label" id="chaseLabel">追击进度 <b>0</b> / 30</div>
+        <div class="chase-bar"><div class="chase-fill" id="chaseFill"></div></div>
+      </div>
     </div>
 
     <!-- 视图2：分类 -->
@@ -578,7 +598,7 @@ function celebrate(name, caught){
   const sub = document.getElementById('celeSub');
   if(caught){
     title.textContent = '呜…被你抓到了！';
-    sub.innerHTML = '哼，追了我这么久，也算你诚心诚意～<br>那就勉为其难地陪你<b>出去玩</b>吧！🥺';
+    sub.innerHTML = `你居然追了本按钮<b>${dodgeState.count}</b>次！哼，也算你诚心诚意～<br>那就勉为其难地陪你<b>出去玩</b>吧！🥺`;
   }else{
     title.innerHTML = `耶！就决定是「<span style="color:var(--pink-deep)">${name}</span>」啦！`;
     sub.innerHTML = '本周内择日出发，快乐不等人～<br>快点通知对方，<b>不许咕咕</b>哦！';
@@ -633,20 +653,38 @@ const SHAPES = [
   {cls:'f-cloud', radius:'0 0 30px 30px'},
 ];
 const COLORS = ['#FFE3EC','#E2F8EF','#FFF3D6','#EDE7FF','#E3F1FF','#FFE8D9','#FFF6E5','#FFE0E8','#E8F9F0'];
-const PHRASES = ['抓不到我~','嘿嘿嘿','就不去嘛！','略略略~','你追我呀','风一样快！','别想啦！','我要变身啦','抓 呀 抓不到','（装可爱）','再追要生气啦！','手指够不着吧～'];
+const PHRASES = ['抓不到我~','嘿嘿嘿','就不去嘛！','略略略~','你追我呀','风一样快！','别想啦！','我要变身啦','抓 呀 抓不到','（装可爱）','再追要生气啦！','手指够不着吧～','30次才抓得到我！','热身中～','认真模式启动！','残影都追不上','变形满级选手','放弃吧放弃吧~','左边有捷径哦（骗你的）','小短腿倒腾得飞快'];
 let shapeIdx = 0;
+
+/* 追逐规则：追满 30 次累瘫；追得越多按钮反应越快、警觉范围越大 */
+const TIRED_AT = 30;
+const dodgeCooldown = ()=>Math.max(220, 400 - dodgeState.count*6);
+const dodgeRange = ()=>(dodgeState.escaped ? 110 : 90) + Math.min(60, dodgeState.count*2);
+const MILESTONES = {
+  5:'才5次就喘啦？',
+  10:'10次了！我热身完毕～',
+  15:'一半啦，放弃吧～',
+  20:'20次！手指不酸吗？',
+  25:'最后5次…我有点慌了…',
+};
+function updateMeter(){
+  const m = document.getElementById('chaseMeter');
+  if(!m) return;
+  m.hidden = false;
+  document.getElementById('chaseLabel').innerHTML = `追击进度 <b>${dodgeState.count}</b> / ${TIRED_AT}`;
+  document.getElementById('chaseFill').style.width = Math.min(100, dodgeState.count/TIRED_AT*100)+'%';
+}
 
 window.addEventListener('mousemove', e=>{
   dodgeState.mx = e.clientX; dodgeState.my = e.clientY;
   if(dodgeState.tired || dodgeState.caught) return;
   if(!document.getElementById('celebrate').hidden) return;
   const now = performance.now();
-  if(now - dodgeState.cool < 400) return;
+  if(now - dodgeState.cool < dodgeCooldown()) return;
   const r = dodgeBtn.getBoundingClientRect();
   const cx = r.left + r.width/2, cy = r.top + r.height/2;
   const d = Math.hypot(dodgeState.mx-cx, dodgeState.my-cy);
-  const range = dodgeState.escaped ? 110 : 90;
-  if(d < range) dodge();
+  if(d < dodgeRange()) dodge();
 });
 /* 移动端：手指滑过去靠近也躲（mousemove 在手机上不会触发） */
 document.addEventListener('touchmove', e=>{
@@ -655,10 +693,10 @@ document.addEventListener('touchmove', e=>{
   const t = e.touches[0]; if(!t) return;
   dodgeState.mx = t.clientX; dodgeState.my = t.clientY;
   const now = performance.now();
-  if(now - dodgeState.cool < 400) return;
+  if(now - dodgeState.cool < dodgeCooldown()) return;
   const r = dodgeBtn.getBoundingClientRect();
   const cx = r.left + r.width/2, cy = r.top + r.height/2;
-  if(Math.hypot(t.clientX-cx, t.clientY-cy) < 100) dodge();
+  if(Math.hypot(t.clientX-cx, t.clientY-cy) < dodgeRange()) dodge();
 }, {passive:true});
 dodgeBtn.addEventListener('mouseenter', ()=>{ if(!dodgeState.tired && !dodgeState.caught) dodge(); });
 dodgeBtn.addEventListener('touchstart', e=>{
@@ -677,7 +715,7 @@ dodgeBtn.addEventListener('click', e=>{
 function dodge(){
   if(dodgeState.tired || dodgeState.caught) return;
   const now = performance.now();
-  if(now - dodgeState.cool < 400) return;
+  if(now - dodgeState.cool < dodgeCooldown()) return;
   dodgeState.cool = now;
   const pad = 12;
   const w = dodgeBtn.offsetWidth, h = dodgeBtn.offsetHeight;
@@ -688,6 +726,16 @@ function dodge(){
     document.body.appendChild(dodgeBtn); // 脱离卡片，fixed 才真正相对视口
     dodgeBtn.classList.add('escaped');
     dodgeState.escaped = true;
+  }else if(dodgeState.count >= 6){
+    // 残影：跑太快，在原地留个影子
+    const gr = dodgeBtn.getBoundingClientRect();
+    const g = document.createElement('div');
+    g.className = 'btn-ghost';
+    g.style.cssText = `left:${gr.left}px;top:${gr.top}px;width:${gr.width}px;height:${gr.height}px;`
+      + `background:${dodgeBtn.style.background||'#fff'};border-radius:${getComputedStyle(dodgeBtn).borderRadius};`;
+    g.textContent = dodgeBtn.textContent;
+    document.body.appendChild(g);
+    setTimeout(()=>g.remove(), 600);
   }
   const vw = innerWidth, vh = innerHeight;
   let nx, ny, tries = 0;
@@ -710,15 +758,17 @@ function dodge(){
   dodgeBtn.classList.remove('popping'); void dodgeBtn.offsetWidth; dodgeBtn.classList.add('popping');
 
   dodgeState.count++;
-  if(dodgeState.count === 18) enterTired();
+  updateMeter();
+  if(dodgeState.count >= TIRED_AT) enterTired();
+  else if(MILESTONES[dodgeState.count]) saySpeech(MILESTONES[dodgeState.count]);
   else if(dodgeState.count > 4 && dodgeState.count % 5 === 0) saySpeech();
 }
 
-function saySpeech(){
+function saySpeech(line){
   const lines = ['怎么又是我跑？','手指酸不酸呀~','兔子说它帮不了你','越跑越有劲了呢','建议改点左边的按钮'];
   const sp = document.createElement('div');
   sp.className = 'speech';
-  sp.textContent = lines[Math.floor(Math.random()*lines.length)];
+  sp.textContent = line || lines[Math.floor(Math.random()*lines.length)];
   const r = dodgeBtn.getBoundingClientRect();
   document.body.appendChild(sp);
   let x = r.left + r.width/2 - sp.offsetWidth/2;
@@ -734,7 +784,7 @@ function saySpeech(){
 function enterTired(){
   dodgeState.tired = true;
   dodgeBtn.classList.add('tired');
-  dodgeBtn.textContent = '呼…呼…跑不动了…点我试试？';
+  dodgeBtn.textContent = '呼…呼…30次了…跑不动了…点我试试？';
   setTimeout(()=>{
     if(!dodgeState.tired) return;
     dodgeState.tired = false;
