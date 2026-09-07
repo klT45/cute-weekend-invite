@@ -577,7 +577,10 @@ function confettiBurst(){
   clearTimeout(confettiTimer);
   confettiTimer = setTimeout(()=>document.querySelectorAll('.cf').forEach(el=>el.remove()), 6500);
 }
-function celebrate(name, caught){
+/* 当前的选择（用于生成回传链接） */
+let lastPick = null;
+const escHTML = s=>String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function celebrate(name, caught, shared){
   document.getElementById('celebrate').hidden = false;
   // 庆祝时先把到处乱跑的按钮藏起来，别盖在庆祝卡上
   if(typeof dodgeBtn !== 'undefined' && dodgeState.escaped && !caught){
@@ -585,18 +588,30 @@ function celebrate(name, caught){
   }
   const title = document.getElementById('celeTitle');
   const sub = document.getElementById('celeSub');
+  const shareBtn = document.getElementById('btnShare');
   if(caught){
     title.textContent = '呜…被你抓到了！';
     sub.innerHTML = `你居然追了本按钮<b>${dodgeState.count}</b>次！哼，也算你诚心诚意～<br>那就勉为其难地陪你<b>出去玩</b>吧！🥺`;
+    if(!shared) history.replaceState(null,'',location.pathname+'?caught=1');
+    shareBtn.textContent = '💌 复制结果发给 TA';
+  }else if(shared){
+    // 对方发回来的结果链接：直接展示 TA 的选择
+    title.textContent = 'TA 选好啦！🎉';
+    sub.innerHTML = `TA 想去「<span style="color:var(--pink-deep)">${escHTML(name)}</span>」！<br>快安排时间，<b>不许咕咕</b>哦！`;
+    shareBtn.textContent = '🔗 复制链接分享给 TA';
   }else{
     title.innerHTML = `耶！就决定是「<span style="color:var(--pink-deep)">${name}</span>」啦！`;
-    sub.innerHTML = '本周内择日出发，快乐不等人～<br>快点通知对方，<b>不许咕咕</b>哦！';
+    sub.innerHTML = '点下面的按钮复制结果链接发给 TA～<br>TA 点开就能看到你的选择！💌';
+    lastPick = {name};
+    history.replaceState(null,'',location.pathname+'?pick='+encodeURIComponent(name));
+    shareBtn.textContent = '💌 复制我的选择发给 TA';
   }
   confettiBurst();
 }
 btnAgain.addEventListener('click', ()=>{
   document.getElementById('celebrate').hidden = true;
   document.getElementById('shareTip').textContent = '';
+  history.replaceState(null,'',location.pathname); // 清掉地址栏的结果参数，重新选
   if(typeof dodgeBtn !== 'undefined' && !dodgeState.caught) dodgeBtn.style.visibility = '';
   showView('cats');
 });
@@ -783,6 +798,14 @@ function caughtEgg(){
   document.getElementById('celebrate').hidden = false;
   celebrate('', true);
 }
+
+/* 如果是带着选择的结果链接打开的，直接展示 TA 的选择 */
+(function showSharedPick(){
+  const q = new URLSearchParams(location.search);
+  if(q.get('caught')){ celebrate('', true, true); return; }
+  const pick = q.get('pick');
+  if(pick) celebrate(pick, false, true);
+})();
 </script>
 </body>
 </html>
