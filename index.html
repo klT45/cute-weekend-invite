@@ -48,7 +48,7 @@ body{
   border-radius:38px;
   padding:64px 26px 30px;
   box-shadow:0 12px 0 rgba(93,65,87,.07),0 30px 60px rgba(255,143,171,.35),0 0 0 6px rgba(255,255,255,.55);
-  animation:cardIn .85s cubic-bezier(.34,1.4,.44,1) both;
+  animation:cardIn .85s cubic-bezier(.34,1.4,.44,1) backwards;
 }
 @keyframes cardIn{0%{transform:scale(.4) rotate(-6deg);opacity:0}62%{transform:scale(1.06) rotate(1.6deg);opacity:1}100%{transform:scale(1) rotate(0)}}
 .peek{position:absolute;top:-96px;left:50%;transform:translateX(-50%);width:196px;pointer-events:none;animation:peekIn .9s .15s cubic-bezier(.34,1.5,.44,1) both}
@@ -56,7 +56,7 @@ body{
 .eye{transform-box:fill-box;transform-origin:center;animation:blink 4.4s infinite}
 @keyframes blink{0%,91%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
 
-.view{animation:viewPop .5s cubic-bezier(.34,1.45,.5,1) both}
+.view{animation:viewPop .5s cubic-bezier(.34,1.45,.5,1) backwards}
 @keyframes viewPop{from{transform:scale(.82);opacity:0}to{transform:scale(1);opacity:1}}
 .view[hidden]{display:none}
 
@@ -86,7 +86,7 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
 @keyframes shine{0%,55%{left:-70%}80%,100%{left:130%}}
 .btn-primary:active{transform:translateY(4px) scale(1);box-shadow:0 2px 0 #d94f7d}
 
-.btn-row{margin-top:16px;text-align:center}
+.btn-row{margin-top:16px;text-align:center;min-height:50px;display:flex;align-items:center;justify-content:center}
 .btn-dodge{
   font-family:inherit;cursor:pointer;
   font-size:16.5px;letter-spacing:2px;color:var(--ink);
@@ -194,6 +194,14 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
   transition:transform .15s,box-shadow .15s;
 }
 .btn-again:active{transform:translateY(3px);box-shadow:0 2px 0 #3FAE8B}
+.btn-share{
+  font-family:inherit;cursor:pointer;font-size:15px;letter-spacing:2px;color:var(--ink);
+  background:#fff;border:2.5px solid var(--ink);
+  border-radius:999px;padding:10px 26px 8px;box-shadow:0 4px 0 rgba(93,65,87,.18);
+  margin-top:12px;transition:transform .15s;
+}
+.btn-share:active{transform:translateY(2.5px);box-shadow:0 1px 0 rgba(93,65,87,.18)}
+.share-tip{font-size:12.5px;color:var(--ink-soft);margin-top:8px;letter-spacing:1px;min-height:18px}
 
 /* 彩纸 */
 .cf{position:fixed;top:-24px;z-index:600;pointer-events:none;animation:cfFall linear both}
@@ -222,7 +230,7 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
       <h1><svg class="hstar" viewBox="0 0 64 64"><path d="M32 8 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2 Z" fill="#FFD166" stroke="#5D4157" stroke-width="4" stroke-linejoin="round"/></svg>周末出去玩嘛～<svg class="hstar" viewBox="0 0 64 64"><path d="M32 8 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2 Z" fill="#FFC2D1" stroke="#5D4157" stroke-width="4" stroke-linejoin="round"/></svg></h1>
       <p class="subtitle">我偷偷准备了<b>超多</b>好玩的选择，<br>快挑一个嘛，好不好呀～</p>
       <button class="btn-primary" id="btnGo">出去玩！</button>
-      <div class="btn-row">
+      <div class="btn-row" id="dodgeRow">
         <button class="btn-dodge" id="btnDodge">才不出去呢</button>
       </div>
       <p class="hint"><span class="dot"></span>悄悄说：第二个按钮有点调皮，慎点</p>
@@ -256,6 +264,9 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
     <h2 id="celeTitle"></h2>
     <p class="cele-sub" id="celeSub"></p>
     <button class="btn-again" id="btnAgain">再看看别的</button>
+    <br>
+    <button class="btn-share" id="btnShare">🔗 复制链接分享给 TA</button>
+    <p class="share-tip" id="shareTip"></p>
   </div>
 </div>
 
@@ -507,7 +518,9 @@ function showView(name){
   v.hidden = false;
   v.classList.remove('view'); void v.offsetWidth; v.classList.add('view');
   currentView = name;
-  if(dodgeState.escaped) setTimeout(()=>dodge(), 60);
+  // 回到主视图时，把调皮按钮接回卡片里（抓中彩蛋后它会被藏起来）
+  if(name === 'main' && typeof restoreDodge === 'function') restoreDodge();
+  if(typeof dodgeState !== 'undefined' && dodgeState.escaped && !dodgeState.caught) setTimeout(()=>dodge(), 60);
 }
 function tileHTML(t){
   return `<button class="tile ${t.expand?'food-expand':''}" data-id="${t.id}" style="animation-delay:${Math.random()*.25}s">
@@ -557,6 +570,10 @@ function confettiBurst(){
 }
 function celebrate(name, caught){
   document.getElementById('celebrate').hidden = false;
+  // 庆祝时先把到处乱跑的按钮藏起来，别盖在庆祝卡上
+  if(typeof dodgeBtn !== 'undefined' && dodgeState.escaped && !caught){
+    dodgeBtn.style.visibility = 'hidden';
+  }
   const title = document.getElementById('celeTitle');
   const sub = document.getElementById('celeSub');
   if(caught){
@@ -570,12 +587,40 @@ function celebrate(name, caught){
 }
 btnAgain.addEventListener('click', ()=>{
   document.getElementById('celebrate').hidden = true;
+  document.getElementById('shareTip').textContent = '';
+  if(typeof dodgeBtn !== 'undefined' && !dodgeState.caught) dodgeBtn.style.visibility = '';
   showView('cats');
+});
+/* 分享：复制当前链接 */
+document.getElementById('btnShare').addEventListener('click', async ()=>{
+  const tip = document.getElementById('shareTip');
+  const url = location.href;
+  try{
+    await navigator.clipboard.writeText(url);
+    tip.textContent = '链接复制好啦，快发给 TA 吧～💌';
+  }catch(e){
+    // 剪贴板不可用时（比如 http / 旧浏览器），给个可手动复制的提示
+    window.prompt('复制下面这个链接分享给 TA：', url);
+    tip.textContent = '长按复制上面的链接也可以哦～';
+  }
 });
 
 /* ============ 调皮逃跑按钮 ============ */
 const dodgeBtn = document.getElementById('btnDodge');
-const dodgeState = {escaped:false, count:0, cool:0, tired:false, mx:0, my:0};
+const dodgeRow = document.getElementById('dodgeRow');
+const dodgeState = {escaped:false, count:0, cool:0, tired:false, caught:false, mx:0, my:0};
+/* 把调皮按钮接回卡片（用于回到主视图 / 抓中后重置） */
+function restoreDodge(){
+  if(dodgeState.caught) return;
+  dodgeBtn.hidden = false;
+  dodgeBtn.style.visibility = '';
+  if(dodgeState.escaped && dodgeRow && dodgeBtn.parentElement !== dodgeRow){
+    dodgeBtn.classList.remove('escaped');
+    dodgeBtn.removeAttribute('style');
+    dodgeRow.appendChild(dodgeBtn);
+    dodgeState.escaped = false;
+  }
+}
 const SHAPES = [
   {cls:'',        radius:'999px'},
   {cls:'f-round', radius:'50%'},
@@ -593,7 +638,8 @@ let shapeIdx = 0;
 
 window.addEventListener('mousemove', e=>{
   dodgeState.mx = e.clientX; dodgeState.my = e.clientY;
-  if(dodgeState.tired) return;
+  if(dodgeState.tired || dodgeState.caught) return;
+  if(!document.getElementById('celebrate').hidden) return;
   const now = performance.now();
   if(now - dodgeState.cool < 400) return;
   const r = dodgeBtn.getBoundingClientRect();
@@ -602,20 +648,34 @@ window.addEventListener('mousemove', e=>{
   const range = dodgeState.escaped ? 110 : 90;
   if(d < range) dodge();
 });
-dodgeBtn.addEventListener('mouseenter', ()=>{ if(!dodgeState.tired) dodge(); });
+/* 移动端：手指滑过去靠近也躲（mousemove 在手机上不会触发） */
+document.addEventListener('touchmove', e=>{
+  if(dodgeState.tired || dodgeState.caught) return;
+  if(!document.getElementById('celebrate').hidden) return;
+  const t = e.touches[0]; if(!t) return;
+  dodgeState.mx = t.clientX; dodgeState.my = t.clientY;
+  const now = performance.now();
+  if(now - dodgeState.cool < 400) return;
+  const r = dodgeBtn.getBoundingClientRect();
+  const cx = r.left + r.width/2, cy = r.top + r.height/2;
+  if(Math.hypot(t.clientX-cx, t.clientY-cy) < 100) dodge();
+}, {passive:true});
+dodgeBtn.addEventListener('mouseenter', ()=>{ if(!dodgeState.tired && !dodgeState.caught) dodge(); });
 dodgeBtn.addEventListener('touchstart', e=>{
   e.preventDefault();
   if(dodgeState.tired){ caughtEgg(); return; }
+  if(dodgeState.caught) return;
   dodge();
 }, {passive:false});
 dodgeBtn.addEventListener('click', e=>{
   if(dodgeState.tired){ caughtEgg(); return; }
+  if(dodgeState.caught) return;
   e.preventDefault();
   dodge(); // 鼠标极快命中时的兜底：点了也白点
 });
 
 function dodge(){
-  if(dodgeState.tired) return;
+  if(dodgeState.tired || dodgeState.caught) return;
   const now = performance.now();
   if(now - dodgeState.cool < 400) return;
   dodgeState.cool = now;
@@ -625,6 +685,7 @@ function dodge(){
     const r = dodgeBtn.getBoundingClientRect();
     dodgeBtn.style.left = r.left+'px';
     dodgeBtn.style.top = r.top+'px';
+    document.body.appendChild(dodgeBtn); // 脱离卡片，fixed 才真正相对视口
     dodgeBtn.classList.add('escaped');
     dodgeState.escaped = true;
   }
@@ -640,7 +701,7 @@ function dodge(){
 
   // 变形 + 变色 + 变话
   shapeIdx = (shapeIdx + 1 + Math.floor(Math.random()*3)) % SHAPES.length;
-  SHAPES.forEach(s=>dodgeBtn.classList.remove(s.cls));
+  SHAPES.forEach(s=>{ if(s.cls) dodgeBtn.classList.remove(s.cls); });
   const shape = SHAPES[shapeIdx];
   if(shape.cls) dodgeBtn.classList.add(shape.cls);
   dodgeBtn.style.borderRadius = shape.cls ? '' : shape.radius;
@@ -673,17 +734,18 @@ function saySpeech(){
 function enterTired(){
   dodgeState.tired = true;
   dodgeBtn.classList.add('tired');
-  dodgeBtn.textContent = '呼…呼…跑不动了…';
+  dodgeBtn.textContent = '呼…呼…跑不动了…点我试试？';
   setTimeout(()=>{
     if(!dodgeState.tired) return;
     dodgeState.tired = false;
     dodgeBtn.classList.remove('tired');
     dodgeState.cool = 0;
     dodge();
-  }, 1400);
+  }, 2600);
 }
 function caughtEgg(){
   dodgeState.tired = false;
+  dodgeState.caught = true;
   dodgeBtn.classList.remove('tired');
   dodgeBtn.hidden = true;
   document.getElementById('celebrate').hidden = false;
