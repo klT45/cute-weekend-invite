@@ -99,13 +99,6 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
 @keyframes wiggle{0%,100%{transform:rotate(-1.6deg)}50%{transform:rotate(1.8deg)}}
 .hint{text-align:center;color:var(--ink-soft);font-size:12.5px;margin-top:18px;letter-spacing:1px}
 .hint .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--yellow);margin-right:6px;vertical-align:2px}
-/* 追击进度条 */
-.chase-meter{margin-top:12px;text-align:center}
-.chase-meter[hidden]{display:none}
-.chase-label{font-size:12.5px;color:var(--ink-soft);letter-spacing:1px;margin-bottom:6px}
-.chase-label b{color:var(--pink-deep);font-weight:normal}
-.chase-bar{height:13px;border-radius:999px;border:2.5px solid var(--ink);background:#fff;overflow:hidden}
-.chase-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,#FFC2D1,#FF6B95,#C4B5FD);transition:width .35s cubic-bezier(.34,1.3,.44,1)}
 /* 逃跑残影 */
 .btn-ghost{
   position:fixed;z-index:9998;margin:0;pointer-events:none;
@@ -249,11 +242,7 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
       <div class="btn-row" id="dodgeRow">
         <button class="btn-dodge" id="btnDodge">才不出去呢</button>
       </div>
-      <p class="hint"><span class="dot"></span>悄悄说：第二个按钮有点调皮，听说追它 30 次会有惊喜？</p>
-      <div class="chase-meter" id="chaseMeter" hidden>
-        <div class="chase-label" id="chaseLabel">追击进度 <b>0</b> / 30</div>
-        <div class="chase-bar"><div class="chase-fill" id="chaseFill"></div></div>
-      </div>
+      <p class="hint"><span class="dot"></span>悄悄说：第二个按钮有点调皮，慎点</p>
     </div>
 
     <!-- 视图2：分类 -->
@@ -653,27 +642,21 @@ const SHAPES = [
   {cls:'f-cloud', radius:'0 0 30px 30px'},
 ];
 const COLORS = ['#FFE3EC','#E2F8EF','#FFF3D6','#EDE7FF','#E3F1FF','#FFE8D9','#FFF6E5','#FFE0E8','#E8F9F0'];
-const PHRASES = ['抓不到我~','嘿嘿嘿','就不去嘛！','略略略~','你追我呀','风一样快！','别想啦！','我要变身啦','抓 呀 抓不到','（装可爱）','再追要生气啦！','手指够不着吧～','30次才抓得到我！','热身中～','认真模式启动！','残影都追不上','变形满级选手','放弃吧放弃吧~','左边有捷径哦（骗你的）','小短腿倒腾得飞快'];
+const PHRASES = ['抓不到我~','嘿嘿嘿','就不去嘛！','略略略~','你追我呀','风一样快！','别想啦！','我要变身啦','抓 呀 抓不到','（装可爱）','再追要生气啦！','手指够不着吧～','这辈子别想抓到我！','热身中～','认真模式启动！','残影都追不上','变形满级选手','放弃吧放弃吧~','左边有捷径哦（骗你的）','小短腿倒腾得飞快'];
 let shapeIdx = 0;
 
-/* 追逐规则：追满 30 次累瘫；追得越多按钮反应越快、警觉范围越大 */
+/* 追逐规则：追满 30 次累瘫（别告诉玩家，这是隐藏彩蛋）；
+   追得越多按钮反应越快、警觉范围越大 */
 const TIRED_AT = 30;
 const dodgeCooldown = ()=>Math.max(220, 400 - dodgeState.count*6);
 const dodgeRange = ()=>(dodgeState.escaped ? 110 : 90) + Math.min(60, dodgeState.count*2);
 const MILESTONES = {
   5:'才5次就喘啦？',
   10:'10次了！我热身完毕～',
-  15:'一半啦，放弃吧～',
+  15:'还没放弃呢？',
   20:'20次！手指不酸吗？',
-  25:'最后5次…我有点慌了…',
+  25:'你、你别过来啊！',
 };
-function updateMeter(){
-  const m = document.getElementById('chaseMeter');
-  if(!m) return;
-  m.hidden = false;
-  document.getElementById('chaseLabel').innerHTML = `追击进度 <b>${dodgeState.count}</b> / ${TIRED_AT}`;
-  document.getElementById('chaseFill').style.width = Math.min(100, dodgeState.count/TIRED_AT*100)+'%';
-}
 
 window.addEventListener('mousemove', e=>{
   dodgeState.mx = e.clientX; dodgeState.my = e.clientY;
@@ -758,7 +741,6 @@ function dodge(){
   dodgeBtn.classList.remove('popping'); void dodgeBtn.offsetWidth; dodgeBtn.classList.add('popping');
 
   dodgeState.count++;
-  updateMeter();
   if(dodgeState.count >= TIRED_AT) enterTired();
   else if(MILESTONES[dodgeState.count]) saySpeech(MILESTONES[dodgeState.count]);
   else if(dodgeState.count > 4 && dodgeState.count % 5 === 0) saySpeech();
@@ -784,7 +766,7 @@ function saySpeech(line){
 function enterTired(){
   dodgeState.tired = true;
   dodgeBtn.classList.add('tired');
-  dodgeBtn.textContent = '呼…呼…30次了…跑不动了…点我试试？';
+  dodgeBtn.textContent = '呼…呼…跑不动了……';
   setTimeout(()=>{
     if(!dodgeState.tired) return;
     dodgeState.tired = false;
