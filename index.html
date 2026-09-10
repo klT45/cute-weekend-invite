@@ -19,13 +19,13 @@
   --ink:#5D4157; --ink-soft:rgba(93,65,87,.62);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%}
+html{height:100%}
 body{
   font-family:"ZCOOL KuaiLe","Yuanti SC","YouYuan","Microsoft YaHei",sans-serif;
   color:var(--ink);
   background:linear-gradient(165deg,#FFF9F0 0%,#FFEDF2 42%,#E9F6FF 100%);
   min-height:100vh;min-height:100dvh;
-  overflow:hidden;
+  overflow-x:hidden;
   user-select:none;-webkit-user-select:none;
 }
 /* ---------- 背景装饰 ---------- */
@@ -212,6 +212,60 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
 .btn-share:active{transform:translateY(2.5px);box-shadow:0 1px 0 rgba(93,65,87,.18)}
 .share-tip{font-size:12.5px;color:var(--ink-soft);margin-top:8px;letter-spacing:1px;min-height:18px}
 
+/* ---------- 声音开关 ---------- */
+.sound-toggle{
+  position:fixed;top:14px;right:14px;z-index:700;
+  width:44px;height:44px;border-radius:50%;cursor:pointer;
+  background:#fff;border:2.5px solid var(--ink);font-size:19px;line-height:1;
+  box-shadow:0 4px 0 rgba(93,65,87,.18);transition:transform .15s;
+}
+.sound-toggle:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(93,65,87,.18)}
+
+/* ---------- 随机 / 自定义 ---------- */
+.btn-lucky{
+  display:block;width:100%;margin-top:14px;cursor:pointer;
+  font-family:inherit;font-size:15.5px;letter-spacing:1.5px;color:var(--ink);
+  background:linear-gradient(180deg,#FFF6E5,#FFE9C7);
+  border:2.5px solid var(--ink);border-radius:999px;padding:11px 10px 9px;
+  box-shadow:0 4.5px 0 rgba(93,65,87,.16);transition:transform .15s,box-shadow .15s;
+}
+.btn-lucky:active{transform:translateY(2.5px);box-shadow:0 1px 0 rgba(93,65,87,.16)}
+.tile.lucky-flash{
+  transform:translateY(-6px) scale(1.07) rotate(-3deg);
+  box-shadow:0 9px 0 rgba(255,107,149,.28);border-color:var(--pink-deep);
+  background:linear-gradient(180deg,#FFF3F6,#FFE4EC);
+}
+.custom-row{display:flex;gap:8px;margin-top:12px}
+.custom-input{
+  flex:1;min-width:0;font-family:inherit;font-size:16px;color:var(--ink);
+  background:#fff;border:2.5px solid var(--ink);border-radius:999px;
+  padding:10px 16px 8px;outline:none;user-select:text;-webkit-user-select:text;
+}
+.custom-input::placeholder{color:var(--ink-soft)}
+.custom-input:focus{border-color:var(--pink-deep)}
+.custom-go{
+  flex-shrink:0;cursor:pointer;font-family:inherit;font-size:14px;color:#fff;
+  background:linear-gradient(180deg,#FF9FBC,#FF6B95);border:2.5px solid var(--ink);
+  border-radius:999px;padding:10px 18px 8px;box-shadow:0 4px 0 #d94f7d;transition:transform .15s;
+}
+.custom-go:active{transform:translateY(2px);box-shadow:0 1px 0 #d94f7d}
+.shake{animation:shakeX .4s}
+@keyframes shakeX{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.link-gen{
+  display:block;margin:10px auto 0;cursor:pointer;font-family:inherit;font-size:12.5px;
+  color:var(--ink-soft);background:none;border:none;text-decoration:underline dotted;
+  letter-spacing:1px;padding:4px;
+}
+.cele-icon{width:66px;height:66px;margin:0 auto 6px}
+.cele-icon[hidden]{display:none}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(10px);
+  z-index:10001;background:var(--ink);color:#fff;font-size:13.5px;letter-spacing:1px;
+  padding:9px 18px 7px;border-radius:999px;opacity:0;transition:opacity .25s,transform .25s;
+  pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
 /* 彩纸 */
 .cf{position:fixed;top:-24px;z-index:600;pointer-events:none;animation:cfFall linear both}
 @keyframes cfFall{to{transform:translateY(112vh) rotate(740deg)}}
@@ -228,6 +282,9 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
 <!-- 背景装饰 -->
 <div class="deco" id="deco"></div>
 
+<!-- 声音开关 -->
+<button class="sound-toggle" id="soundToggle" aria-label="声音开关" title="声音开关">🔊</button>
+
 <!-- 主舞台 -->
 <main class="stage">
   <section class="card">
@@ -237,12 +294,13 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
     <!-- 视图1：主视图 -->
     <div class="view" id="viewMain">
       <h1><svg class="hstar" viewBox="0 0 64 64"><path d="M32 8 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2 Z" fill="#FFD166" stroke="#5D4157" stroke-width="4" stroke-linejoin="round"/></svg>周末出去玩嘛～<svg class="hstar" viewBox="0 0 64 64"><path d="M32 8 l7 15 16 2 -12 11 3 16 -14 -8 -14 8 3 -16 -12 -11 16 -2 Z" fill="#FFC2D1" stroke="#5D4157" stroke-width="4" stroke-linejoin="round"/></svg></h1>
-      <p class="subtitle">我偷偷准备了<b>超多</b>好玩的选择，<br>快挑一个嘛，好不好呀～</p>
+      <p class="subtitle" id="subtitleEl">我偷偷准备了<b>超多</b>好玩的选择，<br>快挑一个嘛，好不好呀～</p>
       <button class="btn-primary" id="btnGo">出去玩！</button>
       <div class="btn-row" id="dodgeRow">
         <button class="btn-dodge" id="btnDodge">才不出去呢</button>
       </div>
       <p class="hint"><span class="dot"></span>悄悄说：第二个按钮有点调皮，慎点</p>
+      <button class="link-gen" id="linkGen">✏️ 生成专属邀请链接</button>
     </div>
 
     <!-- 视图2：分类 -->
@@ -252,6 +310,11 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
         <div><h2>想做点什么呀？</h2><div class="vsub">点击一个，马上安排！</div></div>
       </div>
       <div class="grid" id="catGrid"></div>
+      <button class="btn-lucky" id="luckyCats">🎲 选择困难？让我帮你选！</button>
+      <div class="custom-row">
+        <input type="text" class="custom-input" id="customInputCats" placeholder="都不是？自己写一个…" maxlength="16">
+        <button class="custom-go" id="customGoCats">就它了</button>
+      </div>
     </div>
 
     <!-- 视图3：吃好吃的 -->
@@ -261,6 +324,11 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
         <div><h2>想吃什么呀？</h2><div class="vsub">都很好吃，选哪个都不亏！</div></div>
       </div>
       <div class="grid" id="foodGrid"></div>
+      <button class="btn-lucky" id="luckyFood">🎲 选择困难？让我帮你选！</button>
+      <div class="custom-row">
+        <input type="text" class="custom-input" id="customInputFood" placeholder="都不是？自己写一个…" maxlength="16">
+        <button class="custom-go" id="customGoFood">就它了</button>
+      </div>
     </div>
   </section>
 </main>
@@ -270,6 +338,7 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
   <div class="cele-card">
     <div class="cele-bunny" id="celeBunny"></div>
     <div class="stars-line" id="starsLine"></div>
+    <div class="cele-icon" id="celeIcon" hidden></div>
     <h2 id="celeTitle"></h2>
     <p class="cele-sub" id="celeSub"></p>
     <button class="btn-again" id="btnAgain">再看看别的</button>
@@ -278,6 +347,8 @@ h1 .hstar{display:inline-block;width:22px;height:22px;vertical-align:-3px;margin
     <p class="share-tip" id="shareTip"></p>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
 /* ============ SVG 素材库（全部手绘） ============ */
@@ -490,6 +561,67 @@ const rainbowDeco = (w) => `<svg width="${w}" viewBox="0 0 120 66" xmlns="http:/
     items.map(i=>`<div class="${i.cls}" style="position:absolute;${i.style}">${i.html}</div>`).join('');
 })();
 
+/* ============ 工具 / 音效 / 个性化 ============ */
+const escHTML = s=>String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* 音效：Web Audio 合成，无需任何素材文件 */
+const Sound = (function(){
+  let ctx = null;
+  let muted = false;
+  try{ muted = localStorage.getItem('cwi_muted') === '1'; }catch(e){}
+  function ac(){
+    if(!ctx){ try{ ctx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ ctx = null; } }
+    if(ctx && ctx.state === 'suspended'){ try{ ctx.resume(); }catch(e){} }
+    return ctx;
+  }
+  function tone(freq, dur, type, vol, delay){
+    if(muted) return;
+    const c = ac(); if(!c) return;
+    const t0 = c.currentTime + (delay||0);
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, t0);
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.linearRampToValueAtTime(vol || .06, t0 + .012);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(t0); o.stop(t0 + dur + .03);
+  }
+  return {
+    blip(){ tone(720, .08, 'triangle', .04); },
+    dodge(){ tone(900, .05, 'square', .02); },
+    pick(){ [523,659,784,1047].forEach((f,i)=>tone(f,.16,'triangle',.055,i*.06)); },
+    tired(){ [420,330,260].forEach((f,i)=>tone(f,.22,'sine',.05,i*.11)); },
+    win(){ [659,784,988,1319].forEach((f,i)=>tone(f,.24,'triangle',.06,i*.1)); },
+    get muted(){ return muted; },
+    toggle(){ muted = !muted; try{ localStorage.setItem('cwi_muted', muted?'1':'0'); }catch(e){} return muted; }
+  };
+})();
+
+const soundToggle = document.getElementById('soundToggle');
+function renderSound(){ soundToggle.textContent = Sound.muted ? '🔇' : '🔊'; }
+renderSound();
+soundToggle.addEventListener('click', ()=>{ const m = Sound.toggle(); renderSound(); if(!m) Sound.blip(); });
+
+let toastTimer = null;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2200);
+}
+
+/* 个性化称呼：链接带 ?to=名字 时显示「名字，我偷偷准备了…」 */
+let toName = '';
+function applyGreeting(name){
+  toName = (name||'').trim().slice(0,16);
+  const el = document.getElementById('subtitleEl');
+  el.innerHTML = toName
+    ? `<b>${escHTML(toName)}</b>，我偷偷准备了超多好玩的选择，<br>快挑一个嘛，好不好呀～`
+    : '我偷偷准备了<b>超多</b>好玩的选择，<br>快挑一个嘛，好不好呀～';
+}
+applyGreeting(new URLSearchParams(location.search).get('to'));
+
 /* ============ 数据 ============ */
 const CATS = [
   {id:'movie', name:'看电影',       icon:'popcorn'},
@@ -556,6 +688,66 @@ foodGrid.addEventListener('click', e=>{
   celebrate(f.name, false);
 });
 
+/* 🎲 选择困难？帮你选：洗牌高亮后随机落定 */
+let luckyBusy = false;
+function luckyPick(gridEl, list){
+  const tiles = Array.from(gridEl.querySelectorAll('.tile'));
+  if(!tiles.length || luckyBusy) return;
+  luckyBusy = true;
+  let n = 0; const steps = 14;
+  const timer = setInterval(()=>{
+    tiles.forEach(t=>t.classList.remove('lucky-flash'));
+    tiles[Math.floor(Math.random()*tiles.length)].classList.add('lucky-flash');
+    Sound.blip();
+    if(++n >= steps){
+      clearInterval(timer);
+      const chosen = tiles[Math.floor(Math.random()*tiles.length)];
+      tiles.forEach(t=>t.classList.remove('lucky-flash'));
+      chosen.classList.add('lucky-flash');
+      const item = list.find(x=>x.id===chosen.dataset.id);
+      setTimeout(()=>{
+        tiles.forEach(t=>t.classList.remove('lucky-flash'));
+        luckyBusy = false;
+        if(item && item.expand){
+          celebrate(FOODS[Math.floor(Math.random()*FOODS.length)].name, false);
+        }else if(item){
+          celebrate(item.name, false);
+        }
+      }, 720);
+    }
+  }, 85);
+}
+document.getElementById('luckyCats').addEventListener('click', ()=>luckyPick(catGrid, CATS));
+document.getElementById('luckyFood').addEventListener('click', ()=>luckyPick(foodGrid, FOODS));
+
+/* 自定义输入：想不出来就自己写一个 */
+function wireCustom(inputId, goId){
+  const input = document.getElementById(inputId);
+  const go = document.getElementById(goId);
+  const submit = ()=>{
+    const v = input.value.trim().slice(0,16);
+    if(!v){ input.classList.remove('shake'); void input.offsetWidth; input.classList.add('shake'); input.focus(); return; }
+    input.value = '';
+    celebrate(v, false);
+  };
+  go.addEventListener('click', submit);
+  input.addEventListener('keydown', e=>{ if(e.key === 'Enter') submit(); });
+}
+wireCustom('customInputCats','customGoCats');
+wireCustom('customInputFood','customGoFood');
+
+/* 生成专属邀请链接：?to=名字 */
+document.getElementById('linkGen').addEventListener('click', async ()=>{
+  const name = window.prompt('想怎么称呼 TA 呀？（会显示在邀请里，可留空）', toName);
+  if(name === null) return;
+  const n = name.trim().slice(0,16);
+  applyGreeting(n);
+  const url = location.origin + location.pathname + (n ? '?to='+encodeURIComponent(n) : '');
+  history.replaceState(null,'',url);
+  try{ await navigator.clipboard.writeText(url); toast(n ? `已生成给「${n}」的邀请链接，去粘贴吧～` : '邀请链接已复制～'); }
+  catch(e){ window.prompt('复制下面这个链接发给 TA：', url); }
+});
+
 /* ============ 庆祝层 ============ */
 const starsLine = document.getElementById('starsLine');
 starsLine.innerHTML = [ICONS.star, ICONS.heartBig, ICONS.star].join('');
@@ -579,7 +771,10 @@ function confettiBurst(){
 }
 /* 当前的选择（用于生成回传链接） */
 let lastPick = null;
-const escHTML = s=>String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function findIcon(name){
+  const it = CATS.concat(FOODS).find(x=>x.name===name);
+  return it ? ICONS[it.icon] : null;
+}
 function celebrate(name, caught, shared){
   document.getElementById('celebrate').hidden = false;
   // 庆祝时先把到处乱跑的按钮藏起来，别盖在庆祝卡上
@@ -589,36 +784,50 @@ function celebrate(name, caught, shared){
   const title = document.getElementById('celeTitle');
   const sub = document.getElementById('celeSub');
   const shareBtn = document.getElementById('btnShare');
+  const iconEl = document.getElementById('celeIcon');
   if(caught){
     title.textContent = '呜…被你抓到了！';
     sub.innerHTML = `你居然追了本按钮<b>${dodgeState.count}</b>次！哼，也算你诚心诚意～<br>那就勉为其难地陪你<b>出去玩</b>吧！🥺`;
-    if(!shared) history.replaceState(null,'',location.pathname+'?caught=1');
+    iconEl.hidden = false; iconEl.innerHTML = ICONS.heartBig;
+    if(!shared) history.replaceState(null,'',location.pathname+'?caught=1'+(toName?'&to='+encodeURIComponent(toName):''));
     shareBtn.textContent = '💌 复制结果发给 TA';
+    Sound.win();
   }else if(shared){
     // 对方发回来的结果链接：直接展示 TA 的选择
-    title.textContent = 'TA 选好啦！🎉';
-    sub.innerHTML = `TA 想去「<span style="color:var(--pink-deep)">${escHTML(name)}</span>」！<br>快安排时间，<b>不许咕咕</b>哦！`;
+    title.textContent = toName ? `${toName} 选好啦！🎉` : 'TA 选好啦！🎉';
+    sub.innerHTML = `${toName ? escHTML(toName) : 'TA'} 想去「<span style="color:var(--pink-deep)">${escHTML(name)}</span>」！<br>快安排时间，<b>不许咕咕</b>哦！`;
+    const ic = findIcon(name); iconEl.hidden = !ic; if(ic) iconEl.innerHTML = ic;
     shareBtn.textContent = '🔗 复制链接分享给 TA';
+    Sound.pick();
   }else{
-    title.innerHTML = `耶！就决定是「<span style="color:var(--pink-deep)">${name}</span>」啦！`;
+    title.innerHTML = `耶！就决定是「<span style="color:var(--pink-deep)">${escHTML(name)}</span>」啦！`;
     sub.innerHTML = '点下面的按钮复制结果链接发给 TA～<br>TA 点开就能看到你的选择！💌';
+    const ic = findIcon(name); iconEl.hidden = !ic; if(ic) iconEl.innerHTML = ic;
     lastPick = {name};
-    history.replaceState(null,'',location.pathname+'?pick='+encodeURIComponent(name));
+    history.replaceState(null,'',location.pathname+'?pick='+encodeURIComponent(name)+(toName?'&to='+encodeURIComponent(toName):''));
     shareBtn.textContent = '💌 复制我的选择发给 TA';
+    Sound.pick();
   }
   confettiBurst();
 }
 btnAgain.addEventListener('click', ()=>{
   document.getElementById('celebrate').hidden = true;
   document.getElementById('shareTip').textContent = '';
-  history.replaceState(null,'',location.pathname); // 清掉地址栏的结果参数，重新选
+  history.replaceState(null,'',location.pathname + (toName ? '?to='+encodeURIComponent(toName) : '')); // 清掉结果参数，保留称呼，重新选
   if(typeof dodgeBtn !== 'undefined' && !dodgeState.caught) dodgeBtn.style.visibility = '';
   showView('cats');
 });
-/* 分享：复制当前链接 */
+/* 分享：优先系统分享面板，否则复制链接 */
 document.getElementById('btnShare').addEventListener('click', async ()=>{
   const tip = document.getElementById('shareTip');
   const url = location.href;
+  if(navigator.share){
+    try{
+      await navigator.share({title:'周末出去玩嘛～🐰', text:'我选好啦，快来看～', url});
+      tip.textContent = '分享出去啦～';
+      return;
+    }catch(e){ if(e && e.name === 'AbortError') return; }
+  }
   try{
     await navigator.clipboard.writeText(url);
     tip.textContent = '链接复制好啦，快发给 TA 吧～💌';
@@ -715,6 +924,7 @@ function dodge(){
   const now = performance.now();
   if(now - dodgeState.cool < dodgeCooldown()) return;
   dodgeState.cool = now;
+  Sound.dodge();
   const pad = 12;
   const w = dodgeBtn.offsetWidth, h = dodgeBtn.offsetHeight;
   if(!dodgeState.escaped){
@@ -782,6 +992,7 @@ function enterTired(){
   dodgeState.tired = true;
   dodgeBtn.classList.add('tired');
   dodgeBtn.textContent = '呼…呼…跑不动了……';
+  Sound.tired();
   setTimeout(()=>{
     if(!dodgeState.tired) return;
     dodgeState.tired = false;
